@@ -20,7 +20,7 @@ let hours = 1
 const threads = [{ thread: 'thread_1', bet: false, status: 'initial' }, { thread: 'thread_2', bet: false, status: 'initial', }, { thread: 'thread_3', bet: false, status: 'initial', }]
 let threadInfo
 let Timer
-var timestampLog = '[' + Date.now() + '] ';
+
 
 const MainTimer = (duration, task) => {
   let startTime = Math.floor(Date.now() / 1000);
@@ -41,6 +41,7 @@ const MainTimer = (duration, task) => {
 };
 
 wss.on('connection', async (ws) => {
+  var timestampLog = '[' + Date.now() + '] ';
   console.log(timestampLog, ' Client connected. Ip Address ==> ', ws._socket.remoteAddress);
   clients.push(ws);
   let query = 'SELECT * FROM data ORDER BY id DESC limit 10'
@@ -49,9 +50,16 @@ wss.on('connection', async (ws) => {
     if (err) throw console.err(err)
     let query = 'SELECT * FROM bets'
     let params = []
-    await db.all(query, params, (err, bets) => {
+    await db.all(query, params, async (err, bets) => {
       if (err) throw console.err(err)
       ws.send(JSON.stringify(['INITIAL_BETS', bets]))
+      let query = 'SELECT * FROM threads'
+      let params = []
+      await db.all(query, params, (err, threads) => {
+        if (err) throw console.err(err)
+        // console.log(JSON.stringify(data))
+        ws.send(JSON.stringify(['INITIAL_threads', threads]))
+      })
     })
     ws.send(JSON.stringify(['INITIAL_CRASH', data]))
   })
@@ -63,23 +71,34 @@ wss.on('connection', async (ws) => {
     threadInfo = data
 
   })
-  console.log(timestampLog, ' ', threadInfo?.toString())
+ 
 
   ws.on('message', (data) => {
     // event data to array
+     timestampLog = '[' + Date.now() + '] ';
     dataString = data?.toString().split(',')
-    console.log(timestampLog, ' Incoming Data : ', dataString?.toString())
+   
+    if(dataString[0] == 'DISCONNECTED' || dataString[0] == 'LIVE'){
+  
+      clients.forEach(function (client) {
+        client.send(JSON.stringify([dataString[0]]));
+      });
+
+    }else {
+      console.log(timestampLog, ' Incoming Data : ', dataString?.toString())
+    }
     if (dataString[0] == 'TIMER_START') {
 console.log(timestampLog, ' Betting Timer Started.')
 
-      // set config data
       crashPoint = dataString[1]
       rounds = dataString[2]
       days = dataString[3]
       hours = dataString[4]
-
-      // Register the Timer
-
+    
+      for (let i of threads) {
+        i.bet = true
+        i.status = 'ready'
+      }
       Timer = MainTimer(60 * 28, () => {
         console.log(timestampLog, ' Refreshing the status of threads.')
         for (let i of threads) {
@@ -102,7 +121,7 @@ console.log(timestampLog, ' Betting Timer Started.')
             if (err) throw console.error(err)
             console.log(timestampLog, ' Sending Data : ', threads?.toString())
             clients.forEach(function (client) {
-              client.send(JSON.stringify(['BET', i.thread, data[0].value]));
+              client.send(JSON.stringify(['BET', i.thread, data[0].value.slice(0, -4)]));
 
             });
           })
@@ -134,10 +153,11 @@ console.log(timestampLog, ' Betting Timer Started.')
         })
 
       } else if (dataString[2] == 'win') {
+        const resultData = JSON.parse(data)
         let query = `SELECT * FROM threads WHERE thread = '${dataString[1]}' `
         db.all(query, [], (err, data) => {
           if (err) throw console.error(err)
-          let query = `UPDATE threads SET value = ${data[0].value * 1.01} , rounds = ${data[0].rounds + 1} WHERE thread = '${dataString[1]}' `
+          let query = `UPDATE threads SET value = ${resultData[3][5]} , rounds = ${data[0].rounds + 1} WHERE thread = '${dataString[1]}' `
           db.run(query, (err) => {
             if (err) throw console.log(timestampLog, 'Error: ', err)
             for (let i of threads) {
@@ -156,7 +176,18 @@ console.log(timestampLog, ' Betting Timer Started.')
       let query = `SELECT * FROM threads WHERE thread = '${dataString[1]}' `
       db.all(query, [], (err, data) => {
         if (err) throw console.error(err)
-        let query = `INSERT INTO bets(win, crash_point, acual_crash_point, thread, rounds, value) VALUES(${dataString[2] == 'win' ? 'true' : 'false'}, 1.01, ${dataString[3]}, '${dataString[1]}', ${data[0].rounds}, ${data[0].value} )`
+        let query = `INSERT INTO bets(
+          id,
+          date,
+          time,
+          round_id,
+          bet,
+          win,
+          crash_point,
+          acual_crash_point,
+          thread,
+          rounds,
+          value,) VALUES('${resultData[3][0]}','${resultData[3][1]}', '${resultData[3][2]}', '${resultData[3][3]}' ,${dataString[2] == 'win' ? 'true' : 'false'}, '${resultData[3][4]}', '${resultData[3][6]}', '${resultData[1]}', ${data[0].rounds}, '${data[0].value}' )`
         db.run(query, (err) => {
           if (err) throw console.log(timestampLog, 'Error: ', err)
         })
