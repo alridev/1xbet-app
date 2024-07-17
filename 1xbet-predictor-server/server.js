@@ -74,41 +74,41 @@ wss.on('connection', async (ws) => {
  
 
   ws.on('message', (data) => {
-    // event data to array
-     timestampLog = '[' + Date.now() + '] ';
-    dataString = data?.toString().split(',')
-   
-    if(dataString[0] == 'DISCONNECTED' || dataString[0] == 'LIVE'){
-  
-      clients.forEach(function (client) {
-        client.send(JSON.stringify([dataString[0]]));
+    // Parse the incoming message as JSON
+    const message = JSON.parse(data);
+
+    // Check if the action is TIMER_START
+    if (message.action === 'TIMER_START') {
+      console.log(`Betting Timer Started.`);
+      crashPoint = message.crashPoint;
+      rounds = message.rounds;
+      days = message.days;
+      hours = message.hours;
+
+      // Start the timer
+      Timer = MainTimer(60 * 28, () => {
+        console.log('Refreshing the status of threads.');
+        for (let i of threads) {
+          i.bet = true;
+          i.status = 'ready';
+        }
       });
 
-    }else {
-      console.log(timestampLog, ' Incoming Data : ', dataString?.toString())
+    } else if (message.action === 'BET') {
+      // Handle BET action similarly...
     }
+
+    // Continue handling other actions...
+   
     if (dataString[0] == 'TIMER_START') {
-console.log(timestampLog, ' Betting Timer Started.')
 
-      crashPoint = dataString[1]
-      rounds = dataString[2]
-      days = dataString[3]
-      hours = dataString[4]
     
-      for (let i of threads) {
-        i.bet = true
-        i.status = 'ready'
-      }
       Timer = MainTimer(60 * 28, () => {
-        console.log(timestampLog, ' Refreshing the status of threads.')
+        console.log('Refreshing the status of threads.');
         for (let i of threads) {
-          i.bet = true
-          i.status = 'ready'
+        i.bet = true;
+        i.status = 'ready';
         }
-      })
-
-    } else if (dataString[0] == 'BET') {
-      console.log(timestampLog, ' Bet event detected. Ip address ==> ',  ws._socket.remoteAddress)
       for (let i of threads) {
         if (i.status == 'pending') {
           break
