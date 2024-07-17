@@ -35604,7 +35604,7 @@ var Pop = function () {
     var _a = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false), active = _a[0], setActive = _a[1];
     var _b = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false), tabExist = _b[0], setTabExist = _b[1];
     (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {
-        chrome.tabs.query({ url: 'https://1xbet.com/en/allgamesentrance/crash/*' }, function (tabs) {
+        chrome.tabs.query({ url: 'https://1xlite-567488.top/ru/allgamesentrance/crash/*' }, function (tabs) {
             console.log(tabs);
             if (tabs.length > 0) {
                 setTabExist(true);
@@ -35623,7 +35623,7 @@ var Pop = function () {
     var stopTimer = function () {
         chrome.runtime.sendMessage(['TIMER_END']);
     };
-    return ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", __assign({ className: "App" }, { children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("h2", { children: "1xBet Autobot - Crash game" }), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("p", { children: "Version - v1.0.0" }), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("p", { children: "created by Shehandezen" }), tabExist ? ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", __assign({ className: "buttons" }, { children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("button", __assign({ style: { background: '#002B72' }, onClick: function () { startTimer(); }, disabled: active }, { children: "Start Autobot" })), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("button", __assign({ style: { background: '#dc3545' }, onClick: function () { stopTimer(); }, disabled: active }, { children: "Stop Autobot" }))] }))) : ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("p", { children: [" Please, open ", (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("a", __assign({ href: "https://1xbet.com/en/allgamesentrance/crash", target: "_blank" }, { children: "1xbet crash game" })), "  to start the war \u263B "] }))] })));
+    return ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", __assign({ className: "App" }, { children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("h2", { children: "1xBet Autobot - Crash game" }), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("p", { children: "Version - v1.0.0" }), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("p", { children: "created by Shehandezen" }), tabExist ? ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", __assign({ className: "buttons" }, { children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("button", __assign({ style: { background: '#002B72' }, onClick: function () { startTimer(); }, disabled: active }, { children: "Start Autobot" })), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("button", __assign({ style: { background: '#dc3545' }, onClick: function () { stopTimer(); }, disabled: active }, { children: "Stop Autobot" }))] }))) : ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("p", { children: [" Please, open ", (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("a", __assign({ href: "https://1xlite-567488.top/ru/allgamesentrance/crash", target: "_blank" }, { children: "1xbet crash game" })), "  to start the war \u263B "] }))] })));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Pop);
 
